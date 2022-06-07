@@ -1,9 +1,6 @@
 import { getProducts, deleteProduct } from "../api/product";
 import reRender from '../helpers/reRender';
 
-function formatNumber(num) {
-    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-  }
 const Product = {
     
     render: async () => { // đã đóng ngoặc nhọn phải có return ở trong
@@ -34,8 +31,9 @@ const Product = {
                         <div>Giá: ${product.price}</div>
                         <div>Trạng thái:${product.status ? 'Hiện' : 'Ẩn'}</div>
                         <div>
-                            <a href="/products/detail/${product.id}"><button class="btn btn-info">Chi tiết</button></a>
-                            <button class="btn btn-danger" data-id="${product.id}">Xoá</button>
+                        <a href="/products/detail/${product.id}"><button class="btn btn-info">Chi tiết</button></a>
+                        <a href="/products/edit/${product.id}"><button class="btn btn-warning">Chỉnh sửa</button></a>
+                        <button class="btn btn-danger" data-id="${product.id}">Xoá</button>
                         </div>
                         
                     </div>`

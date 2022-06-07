@@ -1,23 +1,35 @@
-import { createProduct } from "../api/product";
-import Product from "./Product";
+import { createProduct, getProduct, updateProduct } from "../api/product";
+import router from "../helpers/router";
 function formatNumber(num) {
     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
   }
 const ProductAdd = {
-    render: () => {
+    render: async(id) => {
+
+        let product = {
+            name: '',
+            description: '',
+            price: 0,
+            status: ''
+        };
+
+        if (id) {
+            const response = await getProduct(id);
+            product = response.data;
+        }
         return (`<div>
         <form>
             <div class="form-group">
                 <label>Tên</label>
-                <input class='form-control' id="name"/>
+                <input value="${product.name}" class='form-control' id="name"/>
             </div>
             <div class="form-group">
                 <label>Mô tả</label>
-                <input class='form-control' id="description" />
+                <input value="${product.description}" class='form-control' id="description" />
             </div>
             <div class="form-group">
                 <label>Giá</label>
-                <input type="number" class='form-control'id="price"/>
+                <input value="${product.price}" class='form-control'id="price"/>
             </div>
             <div class="form-group">
                 <label>Trạng thái</label> <br>
@@ -25,12 +37,12 @@ const ProductAdd = {
                 <input type="radio" class="form-check-input" name="status"  id="status"  value= '0'> Ẩn
             </div>
             <div class="form-group">
-                <button type='button' class="btn btn-success">Tạo mới</button>
+                <button type='button' class="btn btn-success">${id ? 'Cập nhật' : 'Tạo mới'}</button>
             </div>
         </form>
     </div>`)
     },
-    afterRender: () => {
+    afterRender: (id) => {
         
         const submitBtn = document.querySelector('.btn')
         submitBtn.addEventListener('click', async(data) => {
@@ -42,15 +54,19 @@ const ProductAdd = {
             const submitData = {
                 name: name,
                 description: description,
-                price: formatNumber(price),  
+                price: formatNumber(price),
                 status: status
             };
-            await createProduct(submitData);
-            
-            window.location.replace('/products');
-            console.log(status);
-        })
+
+            if (id) {
+                await updateProduct(id, submitData);
+            } else {
+                await createProduct(submitData);
+            }
+
+            router.navigate('/products');
+        });
     }
-}
+};
 
 export default ProductAdd;
